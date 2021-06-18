@@ -1,0 +1,24 @@
+a script for recovering fastq.gz files with crc error.  
+
+It uses a follwoing apps and packages;
+
+gzrecover:  https://github.com/arenn/gzrt.git
+validatefastq: https://github.com/biopet/validatefastq/releases/
+seqkit: https://bioinf.shenwei.me/seqkit/download/
+gsed: gnu sed (brew installed, and not to be confused with Apple provided sed) 
+pigz: (brew installed)
+
+gzip -t 
+gzrecover FT_ALTPNE_042319_S6_L001_R1_001.fastq.gz -o fastq.recovered
+gsed -n 'l0' FT_ALTPNE_S1_L001_R1_001.fastq > rec.fastq
+wc -l FT_ALTPNE_S1_L001_R1_001.fastq
+wc -l rec.fastq
+tail -n 10 rec.fastq
+tail -n 10 FT_ALTPNE_S1_L001_R1_001.fastq
+head -n 10 rec.fastq
+gsed -i 's/.*@/@/' rec.fastq
+gsed -i 's/[$]//g' rec.fastq
+seqkit sana -j 12 rec.fastq  -o rec2.fastq
+java  -jar validatefastq-assembly-0.1.1.jar -i rec2.fastq
+pigz -p12 FT_ALTPNE_S1_L001_R1_001.fastq
+md5sum FT_ALTPNE_S1_L001_R1_001.fastq.gz
