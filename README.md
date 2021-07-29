@@ -1,1 +1,1 @@
-# Fastq-rescue
+# FastqRescue
